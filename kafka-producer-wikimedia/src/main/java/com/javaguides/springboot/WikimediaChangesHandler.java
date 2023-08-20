@@ -11,7 +11,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 public class WikimediaChangesHandler implements EventHandler {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+
     private final String topic;
+
+    @Override
+    public void onMessage(String s, MessageEvent messageEvent) throws Exception {
+        log.info("Event data: {}", messageEvent.getData());
+        kafkaTemplate.send(topic, messageEvent.getData());
+    }
 
     @Override
     public void onOpen() throws Exception {
@@ -21,12 +28,6 @@ public class WikimediaChangesHandler implements EventHandler {
     @Override
     public void onClosed() throws Exception {
         log.info("OnClosed method");
-    }
-
-    @Override
-    public void onMessage(String s, MessageEvent messageEvent) throws Exception {
-        log.info("Event data: {}", messageEvent.getData());
-        kafkaTemplate.send(topic, messageEvent.getData());
     }
 
     @Override

@@ -14,23 +14,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 public class WikimediaChangesProducer {
-
     public static final String TOPIC = "wikimedia_recentchange";
     public static final String URL = "https://stream.wikimedia.org/v2/stream/recentchange";
+
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     /**
-     * Read real time stream data from wikimedia, via event source
+     * Read real time stream data from wikimedia via event source
      */
     @SneakyThrows
     public void sendMessage() {
         WikimediaChangesHandler handler = new WikimediaChangesHandler(kafkaTemplate, TOPIC);
         EventSource.Builder builder = new EventSource.Builder(handler, URI.create(URL));
         EventSource eventSource = builder.build();
-
         eventSource.start();
-
         TimeUnit.MINUTES.sleep(10);
-
         }
 }
